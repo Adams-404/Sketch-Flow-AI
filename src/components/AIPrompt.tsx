@@ -33,12 +33,12 @@ const AIPrompt: React.FC<AIPromptProps> = ({ prompt, onDiagramGenerated, classNa
     }
 
     // Check if API key is set
-    const hasApiKey = localStorage.getItem('openai_api_key');
+    const hasApiKey = import.meta.env.VITE_GEMINI_API_KEY;
     if (!hasApiKey) {
       setApiKeyPopoverOpen(true);
       toast({
         title: "API Key Required",
-        description: "Please add your OpenAI API key first",
+        description: "Please add your Gemini API key first",
         variant: "destructive",
       });
       return;
@@ -96,7 +96,7 @@ const AIPrompt: React.FC<AIPromptProps> = ({ prompt, onDiagramGenerated, classNa
       </Popover>
       
       <p className="text-xs text-slate-500 dark:text-slate-400">
-        Using GPT-4o-mini
+        Using Gemini 2.5 Flash
       </p>
     </div>
   );

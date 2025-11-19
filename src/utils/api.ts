@@ -1,14 +1,14 @@
 
 /**
- * API utility for generating Mermaid diagrams using GPT-4o-mini
+ * API utility for generating Mermaid diagrams using Google Gemini API
  */
 
-const API_ENDPOINT = 'https://api.openai.com/v1/chat/completions';
+const API_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 
 // Check if we should use the mock API or the real one
 // Using mock when no API key is available
 const shouldUseMock = () => {
-  return !localStorage.getItem('openai_api_key');
+  return !import.meta.env.VITE_GEMINI_API_KEY;
 };
 
 export const generateMermaidDiagram = async (prompt: string): Promise<string> => {
@@ -62,35 +62,33 @@ export const generateMermaidDiagram = async (prompt: string): Promise<string> =>
   }
   
   try {
-    const apiKey = localStorage.getItem('openai_api_key');
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
     if (!apiKey) {
-      throw new Error('API key is required. Please add your OpenAI API key.');
+      throw new Error('API key is required. Please set VITE_GEMINI_API_KEY in your .env file.');
     }
 
-    console.log('Sending request to OpenAI with prompt:', prompt);
-    const response = await fetch(API_ENDPOINT, {
+    console.log('Sending request to Gemini with prompt:', prompt);
+    const response = await fetch(`${API_ENDPOINT}?key=${apiKey}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [
+        contents: [
           {
-            role: 'system',
-            content: `You are a diagram expert specializing in creating Mermaid syntax diagrams. 
-            When given a request, respond ONLY with valid Mermaid syntax code surrounded by backticks like this: \`mermaid code here\`.
-            Do not include any explanations, markdown code blocks, or anything else outside the backticks.
-            Ensure the diagram is clean, well-organized, and correctly formatted.`
-          },
-          {
-            role: 'user',
-            content: `Create a Mermaid diagram based on this description: ${prompt}`
+            parts: [
+              {
+                text: `You are a diagram expert specializing in creating Mermaid syntax diagrams. When given a request, respond ONLY with valid Mermaid syntax code. Do not include any explanations, markdown code blocks with backticks, or anything else. Ensure the diagram is clean, well-organized, and correctly formatted.
+
+Create a Mermaid diagram based on this description: ${prompt}`
+              }
+            ]
           }
         ],
-        temperature: 0.7,
-        max_tokens: 1000,
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 1000,
+        },
       }),
     });
 
@@ -101,20 +99,26 @@ export const generateMermaidDiagram = async (prompt: string): Promise<string> =>
     }
 
     const data = await response.json();
-    const generatedText = data.choices[0].message.content.trim();
+    const generatedText = data.candidates[0]?.content?.parts[0]?.text?.trim();
     
-    // Extract content between backticks using regex
-    const backtickPattern = /`(.*?)`/gs;
-    const backtickMatch = [...generatedText.matchAll(backtickPattern)];
+    if (!generatedText) {
+      throw new Error('No response received from Gemini API');
+    }
+
+    // Clean up the response - remove any markdown code blocks if present
+    let cleanText = generatedText;
     
-    // If we found content between backticks, use that
-    if (backtickMatch.length > 0) {
-      // Join all backtick content with newlines if there are multiple matches
-      return backtickMatch.map(match => match[1]).join('\n');
+    // Remove markdown code blocks with backticks
+    const codeBlockPattern = /```(?:mermaid)?\s*([\s\S]*?)```/g;
+    const codeBlockMatch = codeBlockPattern.exec(cleanText);
+    if (codeBlockMatch) {
+      cleanText = codeBlockMatch[1].trim();
     }
     
-    // Fallback to the entire response if no backticks found
-    return generatedText;
+    // Remove any remaining backticks
+    cleanText = cleanText.replace(/`/g, '').trim();
+    
+    return cleanText;
   } catch (error) {
     console.error('Error in API call:', error);
     throw new Error(error instanceof Error ? error.message : 'Failed to generate diagram. Please try again later.');

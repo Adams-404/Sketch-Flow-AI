@@ -18,6 +18,7 @@ A modern, interactive web application for creating beautiful diagrams using Merm
 - **UI Components**: shadcn/ui with Radix UI primitives
 - **Styling**: Tailwind CSS with custom glass-morphism effects
 - **Diagram Rendering**: Mermaid.js
+- **AI Integration**: Google Gemini API for diagram generation
 - **State Management**: React hooks with TanStack Query
 - **Routing**: React Router DOM
 - **Form Handling**: React Hook Form with Zod validation
@@ -48,7 +49,13 @@ A modern, interactive web application for creating beautiful diagrams using Merm
    bun install
    ```
 
-3. **Start the development server**
+3. **Set up environment variables**
+   ```bash
+   cp .env.example .env
+   # Edit .env and add your Gemini API key
+   ```
+
+4. **Start the development server**
    ```bash
    npm run dev
    # or
@@ -57,7 +64,7 @@ A modern, interactive web application for creating beautiful diagrams using Merm
    bun dev
    ```
 
-4. **Open your browser**
+5. **Open your browser**
    Navigate to `http://localhost:5173` (or the port shown in your terminal)
 
 ## 🛠️ Available Scripts
@@ -122,9 +129,20 @@ graph TD
 
 ### Environment Variables
 
-The app supports the following environment variables:
+Create a `.env` file in the root of your project with the following:
 
-- `VITE_API_KEY` - OpenAI API key for AI features (optional)
+```env
+# Google Gemini API Key
+# Get your API key from: https://makersuite.google.com/app/apikey
+VITE_GEMINI_API_KEY=your_gemini_api_key_here
+```
+
+### Getting a Gemini API Key
+
+1. Visit [Google AI Studio](https://makersuite.google.com/app/apikey)
+2. Create a new API key
+3. Add the API key to your `.env` file as shown above
+4. Restart your development server for the changes to take effect
 
 ### Customization
 
