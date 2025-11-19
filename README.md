@@ -1,4 +1,4 @@
-# Mermaid Sketcher
+# SketchFlow AI
 
 A modern, interactive web application for creating beautiful diagrams using Mermaid syntax with AI-powered assistance. Built with React, TypeScript, and Tailwind CSS.
 
@@ -37,7 +37,7 @@ A modern, interactive web application for creating beautiful diagrams using Merm
 1. **Clone the repository**
    ```bash
    git clone <YOUR_GIT_URL>
-   cd mermaid-sketcher
+   cd sketchflow-ai
    ```
 
 2. **Install dependencies**
