@@ -44,7 +44,17 @@ const Preview: React.FC<PreviewProps> = ({ code, className }) => {
         setSvg(svg);
       } catch (err) {
         console.error('Mermaid rendering error:', err);
-        setError(err instanceof Error ? err.message : 'Failed to render diagram');
+        const errorMessage = err instanceof Error ? err.message : 'Failed to render diagram';
+        
+        // Provide user-friendly error messages for common syntax issues
+        let userFriendlyMessage = errorMessage;
+        if (errorMessage.includes('Parse error') || errorMessage.includes('Expecting')) {
+          userFriendlyMessage = '⚠️ The diagram syntax has an error. This usually happens when the AI generates invalid Mermaid syntax. Try generating again or manually fix the syntax in the editor.';
+        } else if (errorMessage.includes('overloaded') || errorMessage.includes('temporarily unavailable')) {
+          userFriendlyMessage = '⚠️ The AI service is temporarily unavailable. Please try again in a moment.';
+        }
+        
+        setError(userFriendlyMessage);
         setSvg('');
       } finally {
         setLoading(false);
