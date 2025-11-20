@@ -41,8 +41,8 @@ A modern, interactive web application for creating beautiful diagrams using Merm
 
 1. **Clone the repository**
    ```bash
-   git clone <YOUR_GIT_URL>
-   cd sketchflow-ai
+   git clone https://github.com/Adams-404/Sketch-Flow-AI.git
+   cd Sketch-Flow-AI
    ```
 
 2. **Install dependencies**
@@ -205,7 +205,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 If you encounter any issues or have questions:
 
-1. Check the [Issues](../../issues) page
+1. Check the [Issues](https://github.com/Adams-404/Sketch-Flow-AI/issues) page
 2. Create a new issue with detailed information
 3. Join our community discussions
 
