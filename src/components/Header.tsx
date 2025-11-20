@@ -15,9 +15,7 @@ const Header: React.FC<HeaderProps> = ({
     <header className="w-full py-4 px-6 border-b border-white/10 dark:border-white/5 backdrop-blur-md bg-white/30 dark:bg-black/20 sticky top-0 z-50 transition-all duration-300">
       <div className="container max-w-[1600px] flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary to-violet-600 text-white flex items-center justify-center font-bold text-lg shadow-lg shadow-primary/20">
-            S
-          </div>
+          <img src="/logo.png" alt="SketchFlow AI Logo" className="h-10 w-10 rounded-xl shadow-lg shadow-primary/20 object-cover" />
           <div className="flex flex-col">
             <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
               SketchFlow AI
@@ -56,7 +54,7 @@ const Header: React.FC<HeaderProps> = ({
             className="bg-foreground text-background hover:bg-foreground/90 shadow-lg hover:shadow-xl transition-all duration-300"
             asChild
           >
-            <a href="https://github.com" target="_blank" rel="noopener noreferrer">
+            <a href="https://github.com/Adams-404/Sketch-Flow-AI" target="_blank" rel="noopener noreferrer">
               <Github className="mr-2 h-4 w-4" />
               Star on GitHub
             </a>
