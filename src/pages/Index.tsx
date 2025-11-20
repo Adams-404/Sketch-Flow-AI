@@ -118,7 +118,7 @@ const Index = () => {
                     <span className="w-2 h-8 rounded-full bg-primary/50"></span>
                     Editor
                   </h2>
-                  <div className="text-xs text-muted-foreground font-mono">Mermaid.js Syntax</div>
+
                 </div>
                 <Editor
                   value={code}
