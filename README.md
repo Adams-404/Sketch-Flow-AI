@@ -1,5 +1,10 @@
 # SketchFlow AI
 
+<div align="center">
+  <img src="public/logo.png" alt="SketchFlow AI Logo" width="120" height="120" style="border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+  <br/>
+</div>
+
 A modern, interactive web application for creating beautiful diagrams using Mermaid syntax with AI-powered assistance. Built with React, TypeScript, and Tailwind CSS.
 
 ## 🌟 Features
