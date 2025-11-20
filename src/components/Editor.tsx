@@ -20,14 +20,23 @@ const Editor: React.FC<EditorProps> = ({
   onPromptChange
 }) => {
   const editorRef = useRef<HTMLTextAreaElement>(null);
+  const promptRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (editorRef.current) {
-      // Auto-resize textarea
+      // Auto-resize code textarea
       editorRef.current.style.height = 'auto';
       editorRef.current.style.height = `${editorRef.current.scrollHeight}px`;
     }
   }, [value]);
+
+  useEffect(() => {
+    if (promptRef.current) {
+      // Auto-resize prompt textarea
+      promptRef.current.style.height = 'auto';
+      promptRef.current.style.height = `${promptRef.current.scrollHeight}px`;
+    }
+  }, [promptValue]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Tab') {
@@ -55,8 +64,8 @@ const Editor: React.FC<EditorProps> = ({
   };
 
   return (
-    <div className={cn("h-full flex flex-col", className)}>
-      <Tabs defaultValue="code" className="h-full flex flex-col">
+    <div className={cn("flex flex-col min-h-[300px]", className)}>
+      <Tabs defaultValue="code" className="flex flex-col flex-1">
         <TabsList className="w-full justify-start bg-transparent border-b border-border/50 rounded-none px-0">
           <TabsTrigger
             value="code"
@@ -72,15 +81,15 @@ const Editor: React.FC<EditorProps> = ({
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="code" className="flex-1 mt-0 h-full">
-          <div className="h-full relative group">
+        <TabsContent value="code" className="flex-1 mt-0 flex flex-col">
+          <div className="relative group flex flex-col">
             <textarea
               ref={editorRef}
               value={value}
               onChange={(e) => onChange(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Enter your mermaid code here..."
-              className="editor-container h-full resize-none font-mono animate-fade-in"
+              className="editor-container w-full resize-none font-mono animate-fade-in min-h-[200px]"
               spellCheck="false"
             />
             <button
@@ -96,13 +105,14 @@ const Editor: React.FC<EditorProps> = ({
           </div>
         </TabsContent>
 
-        <TabsContent value="prompt" className="flex-1 mt-0 h-full">
-          <div className="h-full">
+        <TabsContent value="prompt" className="flex-1 mt-0 flex flex-col">
+          <div className="flex flex-col">
             <textarea
+              ref={promptRef}
               value={promptValue}
               onChange={(e) => onPromptChange(e.target.value)}
               placeholder="Describe the diagram you want to create..."
-              className="editor-container h-full resize-none animate-fade-in"
+              className="editor-container w-full resize-none animate-fade-in min-h-[200px]"
               spellCheck="false"
             />
           </div>

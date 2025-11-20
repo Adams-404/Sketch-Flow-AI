@@ -110,9 +110,9 @@ const Index = () => {
         />
 
         <main className="flex-1 container py-8 flex flex-col gap-8 max-w-[1600px]">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 flex-1 h-full">
-            <div className="flex flex-col gap-6 h-full">
-              <div className="glass-panel p-6 flex flex-col gap-6 animate-slide-in h-full">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 flex-1 items-start">
+            <div className="flex flex-col gap-6">
+              <div className="glass-panel p-6 flex flex-col gap-6 animate-slide-in">
                 <div className="flex items-center justify-between">
                   <h2 className="text-lg font-semibold text-foreground/80 flex items-center gap-2">
                     <span className="w-2 h-8 rounded-full bg-primary/50"></span>
