@@ -1,16 +1,11 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
-import { Sparkles, Loader2, Settings, RefreshCw, AlertTriangle } from "lucide-react";
+import { Sparkles, Loader2, RefreshCw, AlertTriangle } from "lucide-react";
 import { cn } from '@/lib/utils';
 import { generateMermaidDiagram } from '@/utils/api';
 import { toast } from "@/components/ui/use-toast";
-import ApiKeyInput from './ApiKeyInput';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+
 
 interface AIPromptProps {
   prompt: string;
@@ -20,7 +15,6 @@ interface AIPromptProps {
 
 const AIPrompt: React.FC<AIPromptProps> = ({ prompt, onDiagramGenerated, className }) => {
   const [loading, setLoading] = useState(false);
-  const [apiKeyPopoverOpen, setApiKeyPopoverOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [retryCountdown, setRetryCountdown] = useState<number | null>(null);
   const [isRetryable, setIsRetryable] = useState(false);
@@ -49,10 +43,10 @@ const AIPrompt: React.FC<AIPromptProps> = ({ prompt, onDiagramGenerated, classNa
   }, [retryCountdown]);
 
   const checkIfRetryable = (errorMessage: string): boolean => {
-    return errorMessage.includes('overloaded') || 
-           errorMessage.includes('temporarily unavailable') ||
-           errorMessage.includes('503') ||
-           errorMessage.includes('Service Unavailable');
+    return errorMessage.includes('overloaded') ||
+      errorMessage.includes('temporarily unavailable') ||
+      errorMessage.includes('503') ||
+      errorMessage.includes('Service Unavailable');
   };
 
   const startAutoRetry = () => {
@@ -74,7 +68,6 @@ const AIPrompt: React.FC<AIPromptProps> = ({ prompt, onDiagramGenerated, classNa
     // Check if API key is set
     const hasApiKey = import.meta.env.VITE_GEMINI_API_KEY;
     if (!hasApiKey) {
-      setApiKeyPopoverOpen(true);
       toast({
         title: "API Key Required",
         description: "Please add your Gemini API key first",
@@ -88,7 +81,7 @@ const AIPrompt: React.FC<AIPromptProps> = ({ prompt, onDiagramGenerated, classNa
       setError(null);
       setRetryCountdown(null);
       setIsRetryable(false);
-      
+
       const diagram = await generateMermaidDiagram(prompt);
       onDiagramGenerated(diagram);
       toast({
@@ -99,17 +92,17 @@ const AIPrompt: React.FC<AIPromptProps> = ({ prompt, onDiagramGenerated, classNa
       console.error('Error generating diagram:', error);
       const errorMessage = error instanceof Error ? error.message : "Failed to generate diagram";
       setError(errorMessage);
-      
+
       const retryable = checkIfRetryable(errorMessage);
       setIsRetryable(retryable);
-      
+
       // Show toast with user-friendly message
       toast({
         title: "Generation failed",
         description: errorMessage,
         variant: "destructive",
       });
-      
+
       // Start auto-retry if it's a retryable error and not already an auto-retry
       if (retryable && !isAutoRetry) {
         startAutoRetry();
@@ -129,83 +122,81 @@ const AIPrompt: React.FC<AIPromptProps> = ({ prompt, onDiagramGenerated, classNa
   };
 
   return (
-    <div className={cn("flex flex-col space-y-3", className)}>
+    <div className={cn("flex flex-col space-y-4", className)}>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-2">
+          <div className="p-1.5 rounded-md bg-primary/10 text-primary">
+            <Sparkles className="h-4 w-4" />
+          </div>
+          <h3 className="text-sm font-medium text-foreground">AI Assistant</h3>
+        </div>
+
+      </div>
+
       <div className="flex items-center space-x-3">
-        <Button 
-          onClick={() => handleGenerate()} 
-          disabled={loading || !prompt.trim()} 
-          className="min-w-32 bg-primary/90 hover:bg-primary transition-all duration-300"
+        <Button
+          onClick={() => handleGenerate()}
+          disabled={loading || !prompt.trim()}
+          className="flex-1 bg-gradient-to-r from-primary to-violet-600 hover:from-primary/90 hover:to-violet-600/90 text-white shadow-lg shadow-primary/20 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
         >
           {loading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Generating...
+              Generating Diagram...
             </>
           ) : (
             <>
               <Sparkles className="mr-2 h-4 w-4" />
-              Generate
+              Generate Diagram
             </>
           )}
         </Button>
-        
-        <Popover open={apiKeyPopoverOpen} onOpenChange={setApiKeyPopoverOpen}>
-          <PopoverTrigger asChild>
-            <Button variant="outline" size="icon" className="h-9 w-9">
-              <Settings className="h-4 w-4" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-80 p-0">
-            <ApiKeyInput />
-          </PopoverContent>
-        </Popover>
-        
-        <p className="text-xs text-slate-500 dark:text-slate-400">
-          Using Gemini 2.5 Flash
-        </p>
       </div>
 
       {/* Error and Retry UI */}
       {error && (
-        <div className="flex flex-col space-y-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-          <div className="flex items-start space-x-2">
-            <AlertTriangle className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
-            <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
+        <div className="flex flex-col space-y-2 p-4 bg-red-50/50 dark:bg-red-900/10 border border-red-200/50 dark:border-red-800/50 rounded-lg animate-fade-in">
+          <div className="flex items-start space-x-3">
+            <AlertTriangle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
+            <div className="flex-1 space-y-1">
+              <p className="text-sm font-medium text-red-800 dark:text-red-200">Generation Failed</p>
+              <p className="text-xs text-red-600 dark:text-red-300 leading-relaxed">{error}</p>
+            </div>
           </div>
-          
+
           {isRetryable && (
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center justify-end space-x-2 pt-2">
               {retryCountdown !== null ? (
-                <div className="flex items-center space-x-2 text-sm text-red-600 dark:text-red-400">
+                <div className="flex items-center space-x-3 text-sm text-red-600 dark:text-red-400 bg-red-100/50 dark:bg-red-900/20 px-3 py-1.5 rounded-md">
                   <Loader2 className="h-3 w-3 animate-spin" />
-                  <span>Auto-retrying in {retryCountdown}s...</span>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
+                  <span className="font-medium">Retrying in {retryCountdown}s...</span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={cancelRetry}
-                    className="h-6 px-2 text-xs"
+                    className="h-6 px-2 text-xs hover:bg-red-200/50 dark:hover:bg-red-800/50"
                   >
                     Cancel
                   </Button>
                 </div>
               ) : (
                 <div className="flex items-center space-x-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
+                  <Button
+                    variant="outline"
+                    size="sm"
                     onClick={handleManualRetry}
                     disabled={loading}
-                    className="h-8 px-3 text-sm"
+                    className="h-8 px-3 text-xs border-red-200 dark:border-red-800 hover:bg-red-50 dark:hover:bg-red-900/20 text-red-700 dark:text-red-300"
                   >
-                    <RefreshCw className="mr-1 h-3 w-3" />
+                    <RefreshCw className="mr-1.5 h-3 w-3" />
                     Retry Now
                   </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={startAutoRetry}
                     disabled={loading}
-                    className="h-8 px-3 text-sm"
+                    className="h-8 px-3 text-xs text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
                   >
                     Auto-Retry
                   </Button>

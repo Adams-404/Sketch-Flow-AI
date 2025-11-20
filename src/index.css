@@ -6,34 +6,34 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 220 20% 10%;
+    --foreground: 240 10% 3.9%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 20% 10%;
+    --card-foreground: 240 10% 3.9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 20% 10%;
+    --popover-foreground: 240 10% 3.9%;
 
-    --primary: 220 60% 50%;
+    --primary: 262 83% 58%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 210 20% 96%;
-    --secondary-foreground: 220 20% 10%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
 
-    --muted: 210 20% 96%;
-    --muted-foreground: 220 10% 40%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
 
-    --accent: 220 30% 95%;
-    --accent-foreground: 220 60% 50%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 220 20% 90%;
-    --input: 220 20% 90%;
-    --ring: 220 60% 50%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 262 83% 58%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -46,33 +46,33 @@
   }
 
   .dark {
-    --background: 220 20% 10%;
-    --foreground: 210 20% 98%;
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
 
-    --card: 220 20% 12%;
-    --card-foreground: 210 20% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 220 20% 10%;
-    --popover-foreground: 210 20% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 220 60% 60%;
-    --primary-foreground: 210 20% 98%;
+    --primary: 263 70% 50%;
+    --primary-foreground: 210 40% 98%;
 
-    --secondary: 215 25% 18%;
-    --secondary-foreground: 210 20% 98%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 215 25% 18%;
-    --muted-foreground: 210 20% 70%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
 
-    --accent: 220 25% 20%;
-    --accent-foreground: 220 60% 60%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
 
-    --destructive: 0 62.8% 40.6%;
-    --destructive-foreground: 210 20% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 215 25% 20%;
-    --input: 215 25% 20%;
-    --ring: 220 60% 60%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 263 70% 50%;
 
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
@@ -103,21 +103,21 @@
 /* Custom styles */
 @layer components {
   .glass-panel {
-    @apply bg-white/80 dark:bg-black/50 backdrop-blur-md border border-slate-200/50 dark:border-slate-800/50 rounded-lg shadow-sm;
+    @apply bg-white/70 dark:bg-slate-950/70 backdrop-blur-xl border border-white/20 dark:border-white/10 rounded-xl shadow-lg transition-all duration-300;
   }
   
   .glass-button {
-    @apply bg-white/80 dark:bg-white/10 backdrop-blur-md border border-slate-200/50 dark:border-slate-700/50 
-    rounded-lg shadow-sm hover:shadow-md transition-all duration-300 hover:bg-white/90 dark:hover:bg-white/20;
+    @apply bg-white/80 dark:bg-white/5 backdrop-blur-md border border-white/20 dark:border-white/10 
+    rounded-lg shadow-sm hover:shadow-md transition-all duration-300 hover:bg-white/90 dark:hover:bg-white/10 hover:scale-[1.02] active:scale-[0.98];
   }
   
   .editor-container {
-    @apply h-full w-full overflow-hidden font-mono text-sm p-4 bg-slate-50/90 dark:bg-slate-900/90 
-    border border-slate-200/80 dark:border-slate-800/80 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary;
+    @apply h-full w-full overflow-hidden font-mono text-sm p-4 bg-slate-50/50 dark:bg-slate-900/50 
+    border border-slate-200/50 dark:border-slate-800/50 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary/50 transition-all duration-300;
   }
   
   .diagram-container {
-    @apply p-6 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 rounded-lg shadow-sm;
+    @apply p-6 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm border border-slate-200/50 dark:border-slate-800/50 rounded-lg shadow-sm transition-all duration-300;
   }
 }
 

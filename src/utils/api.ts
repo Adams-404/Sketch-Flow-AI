@@ -41,7 +41,7 @@ export const generateMermaidDiagram = async (prompt: string): Promise<string> =>
     // For demo purposes, simulate API call with a delay
     console.log('Using MOCK generation with prompt:', prompt);
     await new Promise(resolve => setTimeout(resolve, 1500));
-    
+
     // Return a sample diagram based on the prompt
     if (prompt.toLowerCase().includes('flowchart')) {
       return `flowchart TD
@@ -85,18 +85,18 @@ export const generateMermaidDiagram = async (prompt: string): Promise<string> =>
     C --> D[Example]`;
     }
   }
-  
+
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
   if (!apiKey) {
     throw new Error('API key is required. Please set VITE_GEMINI_API_KEY in your .env file.');
   }
 
   let lastError: Error | null = null;
-  
+
   for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
     try {
       console.log(`Attempt ${attempt + 1}/${MAX_RETRIES + 1}: Sending request to Gemini with prompt:`, prompt);
-      
+
       const response = await fetch(`${API_ENDPOINT}?key=${apiKey}`, {
         method: 'POST',
         headers: {
@@ -135,7 +135,7 @@ Create a Mermaid diagram based on this description: ${prompt}`
         const errorData = await response.json().catch(() => ({}));
         const errorMessage = errorData.error?.message || `API request failed with status ${response.status}`;
         const error = new Error(errorMessage);
-        
+
         // Check if this error is retryable
         if (isRetryableError(error, response.status) && attempt < MAX_RETRIES) {
           const delay = getRetryDelay(attempt);
@@ -143,25 +143,25 @@ Create a Mermaid diagram based on this description: ${prompt}`
           await sleep(delay);
           continue;
         }
-        
+
         throw error;
       }
 
       const data = await response.json();
       console.log('Full API response:', JSON.stringify(data, null, 2));
-      
+
       // Check if the response has the expected structure
       if (!data.candidates || !Array.isArray(data.candidates) || data.candidates.length === 0) {
         console.error('Unexpected API response structure:', data);
         throw new Error('Invalid response format from Gemini API');
       }
-      
+
       const candidate = data.candidates[0];
       console.log('First candidate:', JSON.stringify(candidate, null, 2));
-      
+
       // Handle different possible response structures
       let generatedText = null;
-      
+
       // Check for truncation or other issues
       if (candidate.finishReason === 'MAX_TOKENS') {
         console.error('Response was truncated due to token limit');
@@ -170,7 +170,7 @@ Create a Mermaid diagram based on this description: ${prompt}`
         if (candidate.content && Array.isArray(candidate.content.parts) && candidate.content.parts.length > 0) {
           partialText = candidate.content.parts[0].text?.trim();
         }
-        
+
         if (partialText && (partialText.includes('graph') || partialText.includes('flowchart') || partialText.includes('sequenceDiagram'))) {
           console.log('Found partial diagram content, attempting to use it');
           // We'll continue processing the partial content
@@ -179,17 +179,17 @@ Create a Mermaid diagram based on this description: ${prompt}`
           throw new Error('Response was too long and was truncated. Please try a simpler prompt or try again.');
         }
       }
-      
+
       if (candidate.finishReason === 'SAFETY') {
         console.error('Response was blocked due to safety filters');
         throw new Error('Response was blocked by safety filters. Please try a different prompt.');
       }
-      
+
       if (candidate.finishReason === 'RECITATION') {
         console.error('Response was blocked due to recitation filters');
         throw new Error('Response was blocked due to recitation filters. Please try rephrasing your prompt.');
       }
-      
+
       // Only extract text if we haven't already gotten it from a partial response
       if (!generatedText) {
         // Try the expected structure first
@@ -209,7 +209,7 @@ Create a Mermaid diagram based on this description: ${prompt}`
           generatedText = candidate.content.text.trim();
         }
       }
-      
+
       if (!generatedText) {
         console.error('Could not extract text from candidate:', candidate);
         throw new Error('Invalid candidate format from Gemini API - no text found');
@@ -217,22 +217,22 @@ Create a Mermaid diagram based on this description: ${prompt}`
 
       // Clean up the response - remove any markdown code blocks if present
       let cleanText = generatedText;
-      
+
       // Remove markdown code blocks with backticks
       const codeBlockPattern = /```(?:mermaid)?\s*([\s\S]*?)```/g;
       const codeBlockMatch = codeBlockPattern.exec(cleanText);
       if (codeBlockMatch) {
         cleanText = codeBlockMatch[1].trim();
       }
-      
+
       // Remove any remaining backticks
       cleanText = cleanText.replace(/`/g, '').trim();
-      
+
       // Sanitize Mermaid syntax - fix common issues with special characters
       // First, handle decision nodes with parentheses and special characters
       cleanText = cleanText.replace(/\{([^{}]*)\}/g, (match, content) => {
         // Replace problematic characters in decision nodes
-        let sanitized = content
+        const sanitized = content
           .replace(/"/g, '')
           .replace(/'/g, '')
           .replace(/\(/g, ' - ')
@@ -241,11 +241,11 @@ Create a Mermaid diagram based on this description: ${prompt}`
           .replace(/,/g, ' and ');
         return `{${sanitized.trim()}}`;
       });
-      
+
       // Handle node labels with parentheses and special characters
       cleanText = cleanText.replace(/\[([^[\]]*\([^)]*\)[^[\]]*)\]/g, (match, content) => {
         // Replace problematic characters with safer alternatives
-        let sanitized = content
+        const sanitized = content
           .replace(/"/g, '')
           .replace(/'/g, '')
           .replace(/\(/g, ' - ')
@@ -253,10 +253,10 @@ Create a Mermaid diagram based on this description: ${prompt}`
           .replace(/,/g, ' and ');
         return `[${sanitized.trim()}]`;
       });
-      
+
       // Handle node patterns like G[Choose payment method (Card, Transfer, Wallet)]
       cleanText = cleanText.replace(/([A-Z])\[(.*?\(.*?\).*?)\]/g, (match, id, label) => {
-        let sanitizedLabel = label
+        const sanitizedLabel = label
           .replace(/"/g, '')
           .replace(/'/g, '')
           .replace(/\(/g, ' - ')
@@ -264,39 +264,39 @@ Create a Mermaid diagram based on this description: ${prompt}`
           .replace(/,/g, ' and ');
         return `${id}[${sanitizedLabel.trim()}]`;
       });
-      
+
       // Also handle any remaining problematic characters in square brackets
       cleanText = cleanText.replace(/\[([^[\]]*,[^[\]]*)\]/g, (match, content) => {
         const sanitized = content.replace(/,/g, ' and ');
         return `[${sanitized.trim()}]`;
       });
-      
+
       // Handle edge case with double parentheses and special characters
       cleanText = cleanText.replace(/\(\(([^)]*)\)\)/g, (match, content) => {
-        return `((${content.replace(/[()]/g, '').trim()})`;
+        return `((${content.replace(/[()]/g, '').trim()}))`;
       });
-      
+
       // If this was a truncated response, try to complete the diagram
       if (candidate.finishReason === 'MAX_TOKENS') {
         console.log('Attempting to complete truncated diagram');
-        
+
         // Check if the diagram ends abruptly and try to complete it
         if (cleanText.includes('load_dashboard') && !cleanText.includes('end')) {
           cleanText += '\n    load_dashboard --> end_node((End))\n    end_node((End)) --> stop[Stop]';
         }
-        
+
         // Ensure the diagram has proper ending
         if (!cleanText.includes('End') && !cleanText.includes('end') && !cleanText.includes('Stop') && !cleanText.includes('stop')) {
           cleanText += '\n    end_node((End))';
         }
       }
-      
+
       return cleanText;
-      
+
     } catch (error) {
       lastError = error instanceof Error ? error : new Error('Unknown error occurred');
       console.error(`Attempt ${attempt + 1} failed:`, lastError);
-      
+
       // Check if we should retry
       if (attempt < MAX_RETRIES && isRetryableError(lastError)) {
         const delay = getRetryDelay(attempt);
@@ -317,7 +317,7 @@ Create a Mermaid diagram based on this description: ${prompt}`
       }
     }
   }
-  
+
   // This should never be reached, but TypeScript requires it
   throw lastError || new Error('Failed to generate diagram after multiple attempts.');
 };
